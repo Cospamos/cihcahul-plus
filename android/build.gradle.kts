@@ -1,6 +1,3 @@
-import java.util.Properties
-import java.io.FileInputStream
-
 allprojects {
     repositories {
         google()
@@ -24,10 +21,4 @@ subprojects {
 
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
-}
-
-val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("key.properties")
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }

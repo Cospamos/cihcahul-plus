@@ -1,6 +1,3 @@
-import java.util.Properties
-import java.io.FileInputStream
-
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -17,7 +14,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = true
     }
-
+        
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
@@ -30,24 +27,9 @@ android {
         versionName = flutter.versionName
     }
 
-    signingConfigs {
-        getByName("debug") {}
-    }
-
     buildTypes {
-        getByName("debug") {
+        release {
             signingConfig = signingConfigs.getByName("debug")
-        }
-
-        getByName("release") {
-            signingConfig = null
-
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
     }
 }
