@@ -1,0 +1,279 @@
+decor {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: -1;
+}
+
+decor img:nth-child(1) {
+  position: absolute;
+  right: 0;
+}
+
+decor img:nth-child(2) {
+  position: absolute;
+  top: 50px;
+}
+
+.settings_container {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  padding: 25px;
+}
+
+.settings_container button {
+  width: 40px;
+  aspect-ratio: 1/1;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: large;
+  background-color: var(--container-color);
+}
+
+main {
+  width: 100%;
+  margin-top: 120px;
+  background-color: var(--container-color);
+  border-radius: 32px 32px 0 0;
+  padding: 30px;
+  padding-top: 75px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  max-width: 100%;
+}
+
+header {
+  position: absolute;
+  top: -55px;
+  display: flex;
+  align-items: end;
+  gap: 10px;
+}
+
+header .text_info p {
+  transform: translateY(-5px);
+  color: var(--secondary-text-color);
+}
+
+.download_container {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+}
+
+.download_container a {
+  background-color: var(--background-color);
+  padding: 5px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download_container button h2 {
+  margin-bottom: 2px;
+}
+
+.feedback_container {
+  display: flex;
+  flex-direction: column;
+}
+
+.feedback_container p {
+  color: var(--secondary-text-color);
+}
+
+.feedback_container a {
+  color: var(--text-color-variation);
+  text-decoration: none;
+}
+
+.feedback_react_stars {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 15px 0;
+}
+
+.feedback_react_stars img {
+  cursor: pointer;
+}
+
+.description_container {
+  display: flex;
+}
+
+.description_container .text_info p {
+  color: var(--secondary-text-color);
+}
+
+.description_container a {
+  background-color: var(--background-color);
+  padding: 15px 5px;
+  height: 35px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.description_container a i {
+  color: #fff;
+  transform: rotate(180deg);
+}
+
+.visual_example_container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 100%;
+  height: 200px;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+}
+
+.visual_example_container > * {
+  height: 100%;
+  border-radius: 8px 8px 0 0;
+}
+
+.graph_container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ratting_summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ratting_summary .feedbacks_cnt {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  color: var(--secondary-text-color);
+}
+
+.ratting_summary h1 {
+  font-size: 50px;
+}
+
+.ratting_summary .rating_sars img {
+  width: 18px;
+}
+
+.review_distribution {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+}
+
+.review_distribution_item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.review_distribution_item .bar {
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  height: 10px;
+  background-color: var(--background-color);
+  border-radius: 10px;
+}
+
+.review_distribution_item .bar .progress {
+  border-radius: 10px;
+  height: 100%;
+  background: var(--background-color-variation);
+}
+
+.feedback_cards {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.feedback_card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.feedback_card .user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.feedback_card .user .icon {
+  width: 40px;
+  height: 40px;
+  aspect-ratio: 1/1;
+  background-color: var(--background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 100%;
+  overflow: hidden;
+}
+
+.feedback_card .user .icon img {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.rating_info {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 5px
+}
+
+.rating_info .date {
+  font-size: 14px;
+}
+
+.feedback_card .rating_sars img {
+  width: 15px;
+}
+
+.review_text, .review_helpful, .review_pull p {
+  color: var(--secondary-text-color);
+}
+
+.review_helpful {
+  padding: 5px 0;
+}
+
+.review_pull {
+  display: flex;
+  align-items: center;
+}
+
+.review_pull button.yes {
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+.review_pull button {
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--color-variation); 
+  color: var(--secondary-text-color);
+}

@@ -1,0 +1,30 @@
+<svg width="238" height="130" viewBox="0 0 238 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_1773_83)">
+<mask id="mask0_1773_83" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="-263" width="425" height="425">
+<path d="M0 -83.7372L167.276 -263H425V162H0V-83.7372Z" fill="#4D4D4D"/>
+</mask>
+<g mask="url(#mask0_1773_83)">
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 214.586 -50.5)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 240.229 -44.9453)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 265.87 -39.3828)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 291.51 -33.8359)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 317.149 -28.2734)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 342.791 -22.7188)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 368.432 -17.1641)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 394.074 -11.6016)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 419.715 -6.04688)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 445.355 -0.488281)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 470.995 5.07031)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 496.636 10.6172)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 522.278 16.1797)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 547.919 21.7383)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 573.561 27.2891)" fill="#9A74E5"/>
+<rect width="16.123" height="415.97" transform="matrix(0.978707 0.205264 -0.974331 0.225122 599.2 32.8594)" fill="#9A74E5"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_1773_83">
+<rect width="238" height="130" fill="white"/>
+</clipPath>
+</defs>
+</svg>
