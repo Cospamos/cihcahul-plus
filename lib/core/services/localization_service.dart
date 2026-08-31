@@ -270,6 +270,14 @@ class L10n {
       'ru': 'Не удалось загрузить обновление. Попробуйте позже.',
       'en': 'The update could not be downloaded. Please try again later.',
     },
+    'update_install_warning_hint': {
+      'ro':
+          'Telefonul poate afisa un avertisment de securitate — apasati "Detalii" si apoi "Instaleaza oricum". Aplicatia vine de la colegiu si este sigura, avertismentul apare doar pentru ca nu este instalata din Play Store.',
+      'ru':
+          'Телефон может показать предупреждение безопасности — нажмите «Подробнее», затем «Всё равно установить». Приложение от колледжа и безопасно, предупреждение появляется просто потому что установка не через Play Store.',
+      'en':
+          'Your phone may show a security warning — tap "Details" then "Install anyway". The app comes from the college and is safe; the warning only appears because it isn\'t installed from the Play Store.',
+    },
     'classroom_not_found': {
       'ro':
           'Clasa salvata ({old}) nu a mai fost gasita. Va rugam alegeti clasa din nou in Setari.',
