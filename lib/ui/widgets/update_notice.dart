@@ -63,7 +63,7 @@ class _UpdateNotificationState extends State<_UpdateNotification> {
         children: [
             Container(
               width: double.infinity,
-              height: 460,
+              height: 400,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: isDark
@@ -131,15 +131,6 @@ class _UpdateNotificationState extends State<_UpdateNotification> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        if (!_downloading) ...[
-                          const SizedBox(height: 12),
-                          Text(
-                            L10n.tr("update_install_warning_hint"),
-                            style: context.theme.textTheme.labelMedium!
-                                .copyWith(color: context.theme.textSecondary),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
                         const Spacer(),
                         if (_downloading) ...[
                           Text(
