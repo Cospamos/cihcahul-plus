@@ -9,6 +9,7 @@ import 'package:cihcahul_plus/ui/templates/SettingsTemplate/common/switcher_cont
 import 'package:cihcahul_plus/ui/templates/SettingsTemplate/common/toggle_container.dart';
 import 'package:cihcahul_plus/ui/widgets/headinfo_container.dart';
 import 'package:cihcahul_plus/ui/widgets/notification_trigher.dart';
+import 'package:cihcahul_plus/ui/widgets/qr_share_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 
@@ -240,6 +241,18 @@ class _TemplateContainerState extends State<TemplateContainer> {
             },
             child: Text(
               L10n.tr("setting_endpoint_source"),
+              style: TextStyle(
+                color: context.theme.surface,
+                decoration: TextDecoration.underline,
+                fontSize: 18,
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          GestureDetector(
+            onTap: () => showQrShareDialog(context),
+            child: Text(
+              L10n.tr("share_app_qr_label"),
               style: TextStyle(
                 color: context.theme.surface,
                 decoration: TextDecoration.underline,

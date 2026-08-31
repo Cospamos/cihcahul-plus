@@ -219,6 +219,11 @@ class L10n {
       'ru': 'Источник Endpoint',
       'en': 'Endpoint source',
     },
+    'share_app_qr_label': {
+      'ro': 'Distribuie aplicatia prin cod QR',
+      'ru': 'Поделиться приложением по QR-коду',
+      'en': 'Share the app via QR code',
+    },
 
     'attention_title': {'ro': 'Atentie', 'ru': 'Внимание', 'en': 'Attention'},
     'ok_button': {'ro': 'Ok', 'ru': 'Ок', 'en': 'OK'},
