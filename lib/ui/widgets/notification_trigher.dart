@@ -22,17 +22,22 @@ class _NotificationTrigherState extends State<NotificationTrigher> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        showDialog(
-          context: context,
-          barrierDismissible: true,
-          barrierColor: Colors.black26,
-          builder: (context) => _warningNotification(context, widget.content),
-        );
-      },
+      onTap: () => showAttentionDialog(context, widget.content),
       child: AbsorbPointer(absorbing: true, child: widget.trigherElement),
     );
   }
+}
+
+/// Shows the same "Attention" dialog `NotificationTrigher` pops up on tap,
+/// but on demand — for cases like a startup check that needs to warn the
+/// user about something without them tapping a disabled control first.
+void showAttentionDialog(BuildContext context, String content) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierColor: Colors.black26,
+    builder: (context) => _warningNotification(context, content),
+  );
 }
 
 Widget _warningNotification(BuildContext context, String content) {

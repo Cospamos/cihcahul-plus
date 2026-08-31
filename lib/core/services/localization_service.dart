@@ -231,5 +231,52 @@ class L10n {
 
     'toggle_on': {'ro': 'On', 'ru': 'Вкл', 'en': 'On'},
     'toggle_off': {'ro': 'Off', 'ru': 'Выкл', 'en': 'Off'},
+
+    'classroom_auto_updated': {
+      'ro':
+          'Setarea "Sunt in clasa" a fost actualizata automat: {old} -> {new}, deoarece clasa anterioara nu mai exista.',
+      'ru':
+          'Настройка «Я в классе» была автоматически обновлена: {old} → {new}, так как прежний класс больше не существует.',
+      'en':
+          'The "I am in class" setting was automatically updated: {old} -> {new}, because the previous class no longer exists.',
+    },
+    'update_available_title': {
+      'ro': 'Actualizare disponibila',
+      'ru': 'Доступно обновление',
+      'en': 'Update available',
+    },
+    'update_available_body': {
+      'ro': 'Versiunea {version} este gata de instalare.',
+      'ru': 'Версия {version} готова к установке.',
+      'en': 'Version {version} is ready to install.',
+    },
+    'update_now_button': {
+      'ro': 'Actualizeaza',
+      'ru': 'Обновить',
+      'en': 'Update',
+    },
+    'update_later_button': {
+      'ro': 'Mai tarziu',
+      'ru': 'Позже',
+      'en': 'Later',
+    },
+    'update_downloading': {
+      'ro': 'Se descarca actualizarea...',
+      'ru': 'Загрузка обновления...',
+      'en': 'Downloading update...',
+    },
+    'update_error': {
+      'ro': 'Actualizarea nu a putut fi descarcata. Incercati mai tarziu.',
+      'ru': 'Не удалось загрузить обновление. Попробуйте позже.',
+      'en': 'The update could not be downloaded. Please try again later.',
+    },
+    'classroom_not_found': {
+      'ro':
+          'Clasa salvata ({old}) nu a mai fost gasita. Va rugam alegeti clasa din nou in Setari.',
+      'ru':
+          'Сохранённый класс ({old}) больше не найден. Пожалуйста, выберите класс заново в настройках.',
+      'en':
+          'Your saved class ({old}) could not be found anymore. Please pick your class again in Settings.',
+    },
   };
 }

@@ -21,7 +21,27 @@ jobs:
 
       - run: flutter pub get
 
-      - run: flutter build apk --release
+      # The release build is signed with a dedicated release keystore (see
+      # android/app/build.gradle.kts), not the auto-generated debug one —
+      # a real cert instead of a "for development" one, and (just as
+      # importantly) restoring the *same* keystore on every run keeps
+      # every release's signature identical, so users can actually install
+      # an update over the previous version instead of Android rejecting
+      # it as a signature mismatch.
+      - name: Restore release keystore
+        run: |
+          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" | base64 -d > android/upload-keystore.jks
+          cat > android/key.properties <<EOF
+          storePassword=${{ secrets.ANDROID_RELEASE_KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
+          storeFile=../upload-keystore.jks
+          EOF
+
+      - run: >
+          flutter build apk --release
+          --build-name=1.0.${{ github.run_number }}
+          --build-number=${{ github.run_number }}
 
       - name: Create Release
         uses: softprops/action-gh-release@v2

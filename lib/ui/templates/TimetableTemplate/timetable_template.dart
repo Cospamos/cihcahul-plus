@@ -1,3 +1,4 @@
+import 'package:cihcahul_plus/core/api/edupage_remote_datasource.dart';
 import 'package:cihcahul_plus/core/models/variable.dart';
 import 'package:cihcahul_plus/core/services/reactive_store.dart';
 import 'package:cihcahul_plus/core/services/timetable_processor.dart';
@@ -91,6 +92,10 @@ class _TimetableTemplateState extends State<TimetableTemplate> {
             backgroundDecor(),
             RefreshIndicator(
               onRefresh: () async {
+                // Pull-to-refresh always hits the API again, ignoring the
+                // once-a-day throttle — the user is explicitly asking for
+                // up-to-date data right now.
+                forceRefreshTimetableData();
                 setState(() {});
                 await Future.delayed(const Duration(milliseconds: 400));
                 WidgetsBinding.instance.addPostFrameCallback((_) {

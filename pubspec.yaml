@@ -53,6 +53,9 @@ dependencies:
   shared_preferences: ^2.5.4
   fuzzy: ^0.5.1
   url_launcher: ^6.3.2
+  package_info_plus: ^10.2.1
+  path_provider: ^2.1.6
+  open_filex: ^4.7.0
 
 dev_dependencies:
   hive_generator: ^2.0.0

@@ -1,12 +1,17 @@
+import 'package:cihcahul_plus/core/api/edupage_remote_datasource.dart';
 import 'package:cihcahul_plus/core/models/selector_entry.dart';
 import 'package:cihcahul_plus/core/models/variable.dart';
+import 'package:cihcahul_plus/core/services/classroom_migration_service.dart';
 import 'package:cihcahul_plus/core/services/localization_service.dart';
 import 'package:cihcahul_plus/core/services/notification_handler.dart';
 import 'package:cihcahul_plus/core/services/reactive_store.dart';
 import 'package:cihcahul_plus/core/services/timetable_processor.dart';
+import 'package:cihcahul_plus/core/services/update_service.dart';
 import 'package:cihcahul_plus/core/utils/converter.dart';
 import 'package:cihcahul_plus/core/utils/logger.dart';
 import 'package:cihcahul_plus/ui/templates/TimetableTemplate/timetable_template.dart';
+import 'package:cihcahul_plus/ui/widgets/notification_trigher.dart';
+import 'package:cihcahul_plus/ui/widgets/update_notice.dart';
 import 'package:flutter/material.dart';
 import 'package:cihcahul_plus/core/themes/app_themes.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -14,6 +19,12 @@ import 'package:cihcahul_plus/ui/templates/SettingsTemplate/settings_template.da
 import 'package:flutter/services.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+
+// Module-level (not per-widget) so it survives HomePage being remounted
+// with a new key on a language switch, but still resets on a genuine
+// process restart — exactly the "once per real app launch" scope the
+// update check needs.
+bool _updateCheckPerformed = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +45,10 @@ void main() async {
   // previous version of the app already wrote to Hive so it doesn't keep
   // coming back through extract()/save() forever.
   await ReactiveStore.forget("edupage_data");
+  // Only refetch once per day on a cold start (a resume does the same
+  // check, see didChangeAppLifecycleState below) — not on every launch,
+  // so the timetable doesn't get re-downloaded every time the app opens.
+  ensureFreshDataForToday();
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -142,6 +157,31 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
 
     _init();
+    _checkClassroomChange();
+    _checkForUpdate();
+  }
+
+  Future<void> _checkClassroomChange() async {
+    final message = await ClassroomMigrationService.checkForClassroomChange();
+    if (message == null || !mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      showAttentionDialog(context, message);
+    });
+  }
+
+  Future<void> _checkForUpdate() async {
+    // Only on a genuine app launch — not on every resume from background,
+    // and not on the HomePage remount a language switch triggers.
+    if (_updateCheckPerformed) return;
+    _updateCheckPerformed = true;
+
+    final info = await UpdateService.checkForUpdate();
+    if (info == null || !mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      showUpdateDialog(context, info);
+    });
   }
 
   Future<void> _init() async {
@@ -191,10 +231,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        // Force a fresh timetable fetch every time the app is opened,
-        // instead of trusting whatever "edupage_data" already sits in
-        // memory from before the app was backgrounded.
-        ReactiveStore.forget("edupage_data");
+        // Once-a-day refresh: only forces a new API call if today's data
+        // hasn't been fetched yet, instead of hammering the API (or being
+        // stuck with a stale response) on every single app open.
+        ensureFreshDataForToday();
+        _checkClassroomChange();
         break;
 
       case AppLifecycleState.inactive:
