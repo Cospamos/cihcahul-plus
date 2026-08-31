@@ -143,7 +143,7 @@ class _UpdateNotificationState extends State<_UpdateNotification> {
                             width: 180,
                             child: LinearProgressIndicator(
                               value: _progress,
-                              color: context.theme.surface,
+                              color: context.theme.decorAccent,
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -186,7 +186,7 @@ class _UpdateNotificationState extends State<_UpdateNotification> {
                                   ),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
-                                    color: context.theme.surface,
+                                    color: context.theme.decorAccent,
                                   ),
                                   child: Text(
                                     L10n.tr("update_now_button"),

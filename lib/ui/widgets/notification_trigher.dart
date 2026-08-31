@@ -122,7 +122,7 @@ Widget _warningNotification(BuildContext context, String content) {
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: context.theme.surface,
+                          color: context.theme.decorAccent,
                         ),
                         child: Text(
                           L10n.tr("ok_button"),

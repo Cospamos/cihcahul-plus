@@ -74,6 +74,15 @@ class MyApp extends StatelessWidget {
     final languageType =
         ReactiveStore.get("language") ??
         ReactiveStore.createAndGet(name: "language", value: "ro", toSave: true);
+    // Local experiment, not part of the shipped identity: a second color
+    // palette ("neutral") people can pick instead of the violet one.
+    final designType =
+        ReactiveStore.get("design") ??
+        ReactiveStore.createAndGet(
+          name: "design",
+          value: "neutral",
+          toSave: true,
+        );
 
     return StreamBuilder(
       stream: themeType!.stream,
@@ -88,33 +97,49 @@ class MyApp extends StatelessWidget {
         };
 
         return StreamBuilder(
-          stream: languageType!.stream,
-          initialData: languageType.get(),
-          builder: (context, langSnapshot) {
-            final language = langSnapshot.data as String? ?? "ro";
+          stream: designType!.stream,
+          initialData: designType.get(),
+          builder: (context, designSnapshot) {
+            final isNeutral = designSnapshot.data == "neutral";
+            final lightPalette = isNeutral
+                ? AppTheme.neutralLight
+                : AppTheme.light;
+            final darkPalette = isNeutral ? AppTheme.neutralDark : AppTheme.dark;
+            final seedColor = isNeutral
+                ? const Color(0xFF2C2C2E)
+                : const Color(0xFF7C5ACB);
 
-            return MaterialApp(
-              theme: ThemeData.light().copyWith(
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: const Color(0xFF7C5ACB),
-                  brightness: Brightness.light,
-                ),
-                extensions: <ThemeExtension<dynamic>>[AppTheme.light],
-                textTheme: AppTheme.light.textTheme,
-              ),
-              darkTheme: ThemeData.dark().copyWith(
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: const Color(0xFF7C5ACB),
-                  brightness: Brightness.dark,
-                ),
-                extensions: <ThemeExtension<dynamic>>[AppTheme.dark],
-                textTheme: AppTheme.dark.textTheme,
-              ),
-              themeMode: themeMode,
-              // Remounting HomePage on language change is the simplest way
-              // to make every L10n.tr(...) call downstream (none of which
-              // take a BuildContext) pick up the new value immediately.
-              home: HomePage(key: ValueKey("home_$language")),
+            return StreamBuilder(
+              stream: languageType!.stream,
+              initialData: languageType.get(),
+              builder: (context, langSnapshot) {
+                final language = langSnapshot.data as String? ?? "ro";
+
+                return MaterialApp(
+                  theme: ThemeData.light().copyWith(
+                    colorScheme: ColorScheme.fromSeed(
+                      seedColor: seedColor,
+                      brightness: Brightness.light,
+                    ),
+                    extensions: <ThemeExtension<dynamic>>[lightPalette],
+                    textTheme: lightPalette.textTheme,
+                  ),
+                  darkTheme: ThemeData.dark().copyWith(
+                    colorScheme: ColorScheme.fromSeed(
+                      seedColor: seedColor,
+                      brightness: Brightness.dark,
+                    ),
+                    extensions: <ThemeExtension<dynamic>>[darkPalette],
+                    textTheme: darkPalette.textTheme,
+                  ),
+                  themeMode: themeMode,
+                  // Remounting HomePage on language change is the simplest
+                  // way to make every L10n.tr(...) call downstream (none of
+                  // which take a BuildContext) pick up the new value
+                  // immediately.
+                  home: HomePage(key: ValueKey("home_$language")),
+                );
+              },
             );
           },
         );

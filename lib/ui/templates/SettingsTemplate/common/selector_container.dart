@@ -199,7 +199,7 @@ class _SelectorContainerState extends State<SelectorContainer> {
                                             .copyWith(
                                               color: (isLight)
                                                   ? Colors.white
-                                                  : context.theme.surface,
+                                                  : context.theme.decorAccent,
                                             ),
                                         suffixIcon: Icon(
                                           Icons.search,
@@ -325,7 +325,7 @@ class _SelectorContainerState extends State<SelectorContainer> {
                   right: 20,
                 ),
                 decoration: BoxDecoration(
-                  border: Border.all(color: context.theme.surface, width: 1),
+                  border: Border.all(color: context.theme.decorAccent, width: 1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(

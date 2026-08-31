@@ -81,17 +81,13 @@ class _NavPanelState extends State<NavPanel> {
                             child: Text(
                               L10n.tr("nav_today"),
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color:
-                                    Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? _selectedIndex == 0
-                                          ? context.theme.textPrimary
-                                          : context.theme.primary
-                                    : _selectedIndex == 0
-                                    ? context.theme.surface
-                                    : context.theme.textPrimary,
-                              ),
+                              // Same color selected or not — the sliding
+                              // highlight behind the text already shows
+                              // which tab is active, so the text doesn't
+                              // need its own color swap (which broke down
+                              // on palettes where the "accent" color is
+                              // close in tone to the highlight itself).
+                              style: TextStyle(color: context.theme.textPrimary),
                             ),
                           ),
                         ),
@@ -107,17 +103,7 @@ class _NavPanelState extends State<NavPanel> {
                             child: Text(
                               L10n.tr("nav_week"),
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color:
-                                    Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? _selectedIndex == 0
-                                          ? context.theme.primary
-                                          : context.theme.textPrimary
-                                    : _selectedIndex == 0
-                                    ? context.theme.textPrimary
-                                    : context.theme.surface,
-                              ),
+                              style: TextStyle(color: context.theme.textPrimary),
                             ),
                           ),
                         ),

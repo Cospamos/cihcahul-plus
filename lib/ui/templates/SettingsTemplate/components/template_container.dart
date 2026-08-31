@@ -73,6 +73,14 @@ class _TemplateContainerState extends State<TemplateContainer> {
             variatsId: ['light', 'dark', 'system'],
             defaultVariant: "system",
           ),
+          SizedBox(height: 5),
+          SwitchContainer(
+            name: L10n.tr("setting_design"),
+            id: "design",
+            variants: [L10n.tr("design_neutral"), L10n.tr("design_violet")],
+            variatsId: ['neutral', 'violet'],
+            defaultVariant: "neutral",
+          ),
           HeadInfoContainer(
             text1: Text(
               L10n.tr("section_filters"),
@@ -242,7 +250,7 @@ class _TemplateContainerState extends State<TemplateContainer> {
             child: Text(
               L10n.tr("setting_endpoint_source"),
               style: TextStyle(
-                color: context.theme.surface,
+                color: context.theme.decorAccent,
                 decoration: TextDecoration.underline,
                 fontSize: 18,
               ),
@@ -254,7 +262,7 @@ class _TemplateContainerState extends State<TemplateContainer> {
             child: Text(
               L10n.tr("share_app_qr_label"),
               style: TextStyle(
-                color: context.theme.surface,
+                color: context.theme.decorAccent,
                 decoration: TextDecoration.underline,
                 fontSize: 18,
               ),

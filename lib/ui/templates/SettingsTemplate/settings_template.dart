@@ -20,7 +20,7 @@ class _SettingsTemplateState extends State<SettingsTemplate> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        backgroundDecor(),
+        backgroundDecor(context),
         SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(

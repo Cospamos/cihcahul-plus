@@ -20,6 +20,11 @@ class AppTheme extends ThemeExtension<AppTheme> {
   final Color chipSelected;
   final Color chipSelectedText;
   final Color chipUnselectedText;
+  // Tint for the decorative background shapes (background_decor.dart).
+  // Deliberately its own token rather than reusing surface: tinting a
+  // shape to the exact color of the background it sits on makes it
+  // invisible, which is exactly what happened before this field existed.
+  final Color decorAccent;
   final TextTheme textTheme;
 
   const AppTheme({
@@ -38,6 +43,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
     required this.chipSelected,
     required this.chipSelectedText,
     required this.chipUnselectedText,
+    required this.decorAccent,
     required this.textTheme,
   });
 
@@ -60,6 +66,9 @@ class AppTheme extends ThemeExtension<AppTheme> {
     chipSelected: Color(0xFF23313C),
     chipSelectedText: Color(0xFF704BC4),
     chipUnselectedText: Colors.white,
+    // Same purple the decor PNGs already are — visually a no-op, keeping
+    // this design exactly as it always looked.
+    decorAccent: Color(0xFF7C5ACB),
     textTheme: TextTheme(
       displayLarge: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, height: 1.12),
       titleLarge:   TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.33),
@@ -96,6 +105,76 @@ class AppTheme extends ThemeExtension<AppTheme> {
     chipSelected: Color(0xFF7C5ACB),
     chipSelectedText: Colors.white,
     chipUnselectedText: Color(0xFF1A1A1A),
+    // Same purple the decor PNGs already are — visually a no-op, keeping
+    // this design exactly as it always looked.
+    decorAccent: Color(0xFF7C5ACB),
+    textTheme: TextTheme(
+      displayLarge: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, height: 1.12),
+      titleLarge:   TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.33),
+      titleSmall:   TextStyle(fontSize: 16, fontWeight: FontWeight.bold, height: 1.33),
+      bodyLarge:    TextStyle(fontSize: 20, fontWeight: FontWeight.bold, height: 1.50),
+      bodyMedium:   TextStyle(fontSize: 15, fontWeight: FontWeight.bold, height: 1.33),
+      bodySmall:    TextStyle(fontSize: 14, fontWeight: FontWeight.bold, height: 1.43),
+      labelLarge:   TextStyle(fontSize: 14, fontWeight: FontWeight.w500,  height: 1.43),
+      labelMedium:  TextStyle(fontSize: 13, fontWeight: FontWeight.w500,  height: 1.33),
+      labelSmall:   TextStyle(fontSize: 11, fontWeight: FontWeight.w500,  height: 1.33),
+    ),
+  );
+
+  // Local experiment only (not part of the shipped violet identity): a
+  // graphite/black palette for people who find the violet too "loud".
+  // Selected via a separate "design" setting, independent of light/dark.
+  static const neutralDark = AppTheme(
+    surface: Color(0xFF242426),
+    surfaceVariant: Color(0xFF242426),
+    surfaceDim: Color(0xFF48484A),
+    primary: Color(0xFF1E1E1E),
+    primaryContainer: Color(0xFF2C2C2E),
+    textPrimary: Colors.white,
+    textSecondary: Color(0xFF9A9A9E),
+    textSecondaryVariant: Color(0xFFAEAEB2),
+    error: Color(0xFFE57373),
+    warning: Color(0xFFFFB74D),
+    success: Color(0xFF4CAF50),
+    chipTrack: Color(0xFF2C2C2E),
+    chipSelected: Color(0xFF48484A),
+    chipSelectedText: Colors.white,
+    chipUnselectedText: Colors.white,
+    // Lighter than surface (0xFF242426) on purpose, so the shapes stay
+    // visible instead of blending perfectly into the background.
+    decorAccent: Color(0xFF48484A),
+    textTheme: TextTheme(
+      displayLarge: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, height: 1.12),
+      titleLarge:   TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.33),
+      titleSmall:   TextStyle(fontSize: 16, fontWeight: FontWeight.bold, height: 1.33),
+      bodyLarge:    TextStyle(fontSize: 20, fontWeight: FontWeight.bold, height: 1.50),
+      bodyMedium:   TextStyle(fontSize: 15, fontWeight: FontWeight.bold, height: 1.33),
+      bodySmall:    TextStyle(fontSize: 14, fontWeight: FontWeight.bold, height: 1.43),
+      labelLarge:   TextStyle(fontSize: 14, fontWeight: FontWeight.w500,  height: 1.43),
+      labelMedium:  TextStyle(fontSize: 13, fontWeight: FontWeight.w500,  height: 1.33),
+      labelSmall:   TextStyle(fontSize: 11, fontWeight: FontWeight.w500,  height: 1.33),
+    ),
+  );
+
+  static const neutralLight = AppTheme(
+    surface: Color(0xFF2C2C2E),
+    surfaceVariant: Color(0xFF2C2C2E),
+    surfaceDim: Color(0xFF1A1A1A),
+    primary: Colors.white,
+    primaryContainer: Color(0xFF2C2C2E),
+    textPrimary: Color(0xFF1A1A1A),
+    textSecondary: Color(0xFF666666),
+    textSecondaryVariant: Color(0xFF1A1A1A),
+    error: Color(0xFFD32F2F),
+    warning: Color(0xFFF57C00),
+    success: Color(0xFF388E3C),
+    chipTrack: Color(0xFFF0F0F2),
+    chipSelected: Color(0xFF2C2C2E),
+    chipSelectedText: Colors.white,
+    chipUnselectedText: Color(0xFF1A1A1A),
+    // Lighter than surface (0xFF2C2C2E) on purpose, so the shapes stay
+    // visible instead of blending perfectly into the background.
+    decorAccent: Color(0xFF48484A),
     textTheme: TextTheme(
       displayLarge: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, height: 1.12),
       titleLarge:   TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.33),
@@ -126,6 +205,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
     Color? chipSelected,
     Color? chipSelectedText,
     Color? chipUnselectedText,
+    Color? decorAccent,
     TextTheme? textTheme,
   }) {
     return AppTheme(
@@ -144,6 +224,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
       chipSelected: chipSelected ?? this.chipSelected,
       chipSelectedText: chipSelectedText ?? this.chipSelectedText,
       chipUnselectedText: chipUnselectedText ?? this.chipUnselectedText,
+      decorAccent: decorAccent ?? this.decorAccent,
       textTheme: textTheme ?? this.textTheme,
     );
   }
@@ -168,6 +249,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
       chipSelected: Color.lerp(chipSelected, other.chipSelected, t)!,
       chipSelectedText: Color.lerp(chipSelectedText, other.chipSelectedText, t)!,
       chipUnselectedText: Color.lerp(chipUnselectedText, other.chipUnselectedText, t)!,
+      decorAccent: Color.lerp(decorAccent, other.decorAccent, t)!,
       textTheme: TextTheme(
         displayLarge: TextStyle.lerp(textTheme.displayLarge, other.textTheme.displayLarge, t),
         titleLarge:   TextStyle.lerp(textTheme.titleLarge,   other.textTheme.titleLarge,   t),

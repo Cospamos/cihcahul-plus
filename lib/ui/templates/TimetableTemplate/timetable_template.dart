@@ -89,7 +89,7 @@ class _TimetableTemplateState extends State<TimetableTemplate> {
             : todayIdx;
         return Stack(
           children: [
-            backgroundDecor(),
+            backgroundDecor(context),
             RefreshIndicator(
               onRefresh: () async {
                 // Pull-to-refresh always hits the API again, ignoring the

@@ -114,6 +114,10 @@ class L10n {
     'theme_dark': {'ro': 'Inchisa', 'ru': 'Тёмная', 'en': 'Dark'},
     'theme_system': {'ro': 'Din sistema', 'ru': 'Системная', 'en': 'System'},
 
+    'setting_design': {'ro': 'Design', 'ru': 'Дизайн', 'en': 'Design'},
+    'design_neutral': {'ro': 'Neutru', 'ru': 'Нейтральный', 'en': 'Neutral'},
+    'design_violet': {'ro': 'Violet', 'ru': 'Фиолетовый', 'en': 'Violet'},
+
     'setting_show_timetable': {
       'ro': 'Arata graficul',
       'ru': 'Показывать расписание',
