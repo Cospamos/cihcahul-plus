@@ -1,3 +1,4 @@
+import 'package:cihcahul_plus/core/services/localization_service.dart';
 import 'package:cihcahul_plus/core/themes/app_themes.dart';
 import 'package:flutter/material.dart';
 
@@ -27,11 +28,11 @@ class _LessonContainerState extends State<LessonContainer> {
   @override
   Widget build(BuildContext context) {
     String classroom = widget.classroom == "0"
-        ? "Sala sportiva"
-        : "Clasa ${widget.classroom}";
+        ? L10n.tr("gym_hall")
+        : L10n.tr("classroom_label", {"n": widget.classroom});
     String group = widget.group == "0"
-        ? "Ambele grupe"
-        : "Grupa ${widget.group}";
+        ? L10n.tr("both_groups")
+        : L10n.tr("group_label", {"n": widget.group});
     Widget image = widget.image;
     String teacher = widget.teacher;
     String subject = widget.subject;
@@ -45,7 +46,7 @@ class _LessonContainerState extends State<LessonContainer> {
           DefaultTextStyle(
             style: context.theme.textTheme.bodyMedium!.copyWith(
               color: context.theme.textPrimary,
-              height: 1.1
+              height: 1.1,
             ),
             child: Expanded(
               child: Column(

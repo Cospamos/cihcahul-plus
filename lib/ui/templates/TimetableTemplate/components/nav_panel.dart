@@ -1,3 +1,4 @@
+import 'package:cihcahul_plus/core/services/localization_service.dart';
 import 'package:cihcahul_plus/core/services/reactive_store.dart';
 import 'package:cihcahul_plus/core/themes/app_themes.dart';
 import 'package:flutter/material.dart';
@@ -78,7 +79,7 @@ class _NavPanelState extends State<NavPanel> {
                           child: Padding(
                             padding: const EdgeInsets.all(5),
                             child: Text(
-                              "Orarul pe azi",
+                              L10n.tr("nav_today"),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color:
@@ -104,7 +105,7 @@ class _NavPanelState extends State<NavPanel> {
                           child: Padding(
                             padding: const EdgeInsets.all(5),
                             child: Text(
-                              "Toate zilele",
+                              L10n.tr("nav_week"),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color:

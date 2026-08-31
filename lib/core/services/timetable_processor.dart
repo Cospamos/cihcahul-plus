@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cihcahul_plus/core/models/lesson_time.dart';
+import 'package:cihcahul_plus/core/models/timetable_day.dart';
 import 'package:cihcahul_plus/core/services/reactive_store.dart';
 import 'package:cihcahul_plus/core/services/timetable_service.dart';
 import 'package:cihcahul_plus/core/utils/converter.dart';
@@ -62,15 +63,14 @@ class TimetableProcessor {
     int weekday,
     Duration nowDuration,
   ) async {
-    
-    if (weekday >= 5) return []; 
+    if (weekday >= 5) return [];
     final timetableType = ReactiveStore.get("timetable_type")?.get();
     final getGroup = ReactiveStore.get("show_group")?.get();
     final studentLanguage = ReactiveStore.get("student_language")?.get();
     final excludeGroup = {"first": '2', "second": '1'};
     final languageMap = {"anglophone": "Franceza", "francophone": "Engleza"};
     final weekParity = Getter.getWeekParity();
-    
+
     final days = switch (timetableType) {
       "student" => await TimetableService().getStudentTimetableFromApi(),
       "teacher" => await TimetableService().getTeacherTimetableFronApi(),
@@ -88,12 +88,16 @@ class TimetableProcessor {
         final classroom = day[interval]![lesson]!.classroom.toString();
         final group = day[interval]![lesson]!.group;
         final weeks = day[interval]![lesson]!.weeks;
-        final lessonStartDuration = (nowDuration - lessonDuration[0]).abs() - Duration(minutes: 5);
+        final lessonStartDuration =
+            (nowDuration - lessonDuration[0]).abs() - Duration(minutes: 5);
         final excludedSubject = languageMap[studentLanguage] ?? "";
-        
+
         if (nowDuration < (lessonDuration[0] - Duration(minutes: 5)).abs() &&
             (weeks == weekParity || weeks == 0) &&
-            (group == excludeGroup[getGroup] || group == '0' || timetableType == "teacher" || excludeGroup[getGroup] == null) &&
+            (group == excludeGroup[getGroup] ||
+                group == '0' ||
+                timetableType == "teacher" ||
+                excludeGroup[getGroup] == null) &&
             (!lesson.contains(excludedSubject) || timetableType == "teacher")) {
           res.add(LessonTime(lesson, classroom, lessonStartDuration));
         }
@@ -184,7 +188,9 @@ class TimetableProcessor {
       subjectMap.forEach((subject, entry) {
         final excludedSubject = languageMap[studentLanguage];
         if (excludeGroup[group] == entry.group) return;
-        if (excludedSubject != null && subject.contains(excludedSubject)) return;
+        if (excludedSubject != null && subject.contains(excludedSubject)) {
+          return;
+        }
 
         lessonList.add([
           interval,
@@ -204,11 +210,16 @@ class TimetableProcessor {
     if (weekday >= 5) return "";
 
     final timetableType = ReactiveStore.get("timetable_type")?.get();
-    final days = switch (timetableType) {
-      "student" => await TimetableService().getStudentTimetableFromApi(),
-      "teacher" => await TimetableService().getTeacherTimetableFronApi(),
-      _ => await TimetableService().getStudentTimetableFromApi(),
-    };
+    final List<TimetableDay> days;
+    try {
+      days = switch (timetableType) {
+        "student" => await TimetableService().getStudentTimetableFromApi(),
+        "teacher" => await TimetableService().getTeacherTimetableFronApi(),
+        _ => await TimetableService().getStudentTimetableFromApi(),
+      };
+    } catch (_) {
+      return "";
+    }
     final weekParity =
         ReactiveStore.get("virtual_week_parity")!.get() ??
         Getter.getWeekParity();
@@ -261,11 +272,16 @@ class TimetableProcessor {
     if (weekday >= 5) return "";
 
     final timetableType = ReactiveStore.get("timetable_type")?.get();
-    final days = switch (timetableType) {
-      "student" => await TimetableService().getStudentTimetableFromApi(),
-      "teacher" => await TimetableService().getTeacherTimetableFronApi(),
-      _ => await TimetableService().getStudentTimetableFromApi(),
-    };
+    final List<TimetableDay> days;
+    try {
+      days = switch (timetableType) {
+        "student" => await TimetableService().getStudentTimetableFromApi(),
+        "teacher" => await TimetableService().getTeacherTimetableFronApi(),
+        _ => await TimetableService().getStudentTimetableFromApi(),
+      };
+    } catch (_) {
+      return "";
+    }
     final weekParity =
         ReactiveStore.get("virtual_week_parity")?.get() ??
         Getter.getWeekParity();

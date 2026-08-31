@@ -21,10 +21,14 @@ Future<String> fetchTimetableJson() async {
     final response = await http.post(url, headers: headers, body: body);
     
     if (response.statusCode == 200) {
+      // Not persisted (toSave: false): this only avoids re-fetching within
+      // the current app session. main.dart clears it on every app resume,
+      // so each time the app is opened it asks the API again instead of
+      // being stuck forever with whatever the very first request returned.
       v = ReactiveStore.createAndGet(
-        name: "edupage_data", 
-        value: response.body, 
-        toSave: true
+        name: "edupage_data",
+        value: response.body,
+        toSave: false,
       );
       return v!.get() as String;
     }

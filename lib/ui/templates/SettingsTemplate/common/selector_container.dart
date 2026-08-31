@@ -1,5 +1,6 @@
 import 'package:cihcahul_plus/core/models/selector_entry.dart';
 import 'package:cihcahul_plus/core/models/variable.dart';
+import 'package:cihcahul_plus/core/services/localization_service.dart';
 import 'package:cihcahul_plus/core/services/reactive_store.dart';
 import 'package:cihcahul_plus/core/themes/app_themes.dart';
 import 'package:cihcahul_plus/ui/widgets/scroll_bar.dart';
@@ -188,17 +189,17 @@ class _SelectorContainerState extends State<SelectorContainer> {
                                         entry.markNeedsBuild();
                                       },
                                       style: context.theme.textTheme.bodyMedium!
-                                          .copyWith(
-                                            color: Colors.white,
-                                          ),
+                                          .copyWith(color: Colors.white),
                                       decoration: InputDecoration(
-                                        hintText: 'Introduce textul...',
+                                        hintText: L10n.tr("search_hint"),
                                         hintStyle: context
                                             .theme
                                             .textTheme
                                             .bodyMedium!
                                             .copyWith(
-                                              color: (isLight) ? Colors.white : context.theme.surface,
+                                              color: (isLight)
+                                                  ? Colors.white
+                                                  : context.theme.surface,
                                             ),
                                         suffixIcon: Icon(
                                           Icons.search,
@@ -217,7 +218,9 @@ class _SelectorContainerState extends State<SelectorContainer> {
                                           right: 0,
                                         ),
                                         filled: true,
-                                        fillColor: (isLight) ? context.theme.primaryContainer : context.theme.primary,
+                                        fillColor: (isLight)
+                                            ? context.theme.primaryContainer
+                                            : context.theme.primary,
                                       ),
                                     ),
                                   ),
@@ -311,7 +314,7 @@ class _SelectorContainerState extends State<SelectorContainer> {
             child: Container(
               padding: EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: context.theme.primaryContainer,
+                color: context.theme.chipTrack,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Container(
@@ -322,13 +325,13 @@ class _SelectorContainerState extends State<SelectorContainer> {
                   right: 20,
                 ),
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: context.theme.surfaceVariant,
-                    width: 1,
-                  ),
+                  border: Border.all(color: context.theme.surface, width: 1),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: Text(v?.get().name),
+                child: Text(
+                  v?.get().name,
+                  style: TextStyle(color: context.theme.chipUnselectedText),
+                ),
               ),
             ),
           ),

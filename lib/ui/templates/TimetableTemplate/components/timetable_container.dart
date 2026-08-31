@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cihcahul_plus/core/models/variable.dart';
+import 'package:cihcahul_plus/core/services/localization_service.dart';
 import 'package:cihcahul_plus/core/services/reactive_store.dart';
 import 'package:cihcahul_plus/core/services/timetable_processor.dart';
 import 'package:cihcahul_plus/core/themes/app_themes.dart';
@@ -8,6 +9,7 @@ import 'package:cihcahul_plus/core/utils/converter.dart';
 import 'package:cihcahul_plus/core/utils/getter.dart';
 import 'package:cihcahul_plus/ui/templates/TimetableTemplate/common/lesson_container.dart';
 import 'package:cihcahul_plus/ui/widgets/headinfo_container.dart';
+import 'package:cihcahul_plus/ui/widgets/vacation_notice.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:cihcahul_plus/ui/templates/TimetableTemplate/common/image_handler.dart';
@@ -51,12 +53,12 @@ class _TimetableContainerState extends State<TimetableContainer> {
               return Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}\n\n${snapshot.stackTrace}");
+              return vacationNotice(context);
             }
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return Padding(
                 padding: EdgeInsets.only(top: 50),
-                child: Text("Datele nu au fost regasite"),
+                child: Text(L10n.tr("no_data_found")),
               );
             }
 
@@ -143,6 +145,9 @@ class _TimetableContainerByDayState extends State<TimetableContainerByDay> {
 
   final int _middleWeek = _fakeWeeks ~/ 2;
   late int _middlePage;
+  late int _currentPage;
+
+  bool get _isAtToday => _currentPage == _middlePage;
 
   late Variable? _savedDayIdx;
 
@@ -162,6 +167,7 @@ class _TimetableContainerByDayState extends State<TimetableContainerByDay> {
       _currentDayIdx = 0;
     }
     _middlePage = _middleWeek * _daysInWeek + _currentDayIdx;
+    _currentPage = _middlePage;
 
     _pageController = PageController(initialPage: _middlePage);
 
@@ -184,86 +190,100 @@ class _TimetableContainerByDayState extends State<TimetableContainerByDay> {
     super.dispose();
   }
 
+  void _returnToToday() {
+    if (!_pageController.hasClients) return;
+    _pageController.jumpToPage(_middlePage);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 250),
-      child: Container(
-        constraints: BoxConstraints(minHeight: screenHeight - 250),
-        padding: const EdgeInsets.only(
-          top: 80,
-          bottom: 30,
-          left: 20,
-          right: 20,
-        ),
-        decoration: BoxDecoration(
-          color: context.theme.primary,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(32),
-            topRight: Radius.circular(32),
+    return PopScope(
+      canPop: _isAtToday,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _returnToToday();
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 250),
+        child: Container(
+          constraints: BoxConstraints(minHeight: screenHeight - 250),
+          padding: const EdgeInsets.only(
+            top: 80,
+            bottom: 30,
+            left: 20,
+            right: 20,
           ),
-        ),
-        child: ExpandablePageView.builder(
-          controller: _pageController,
-          itemCount: _totalPages,
+          decoration: BoxDecoration(
+            color: context.theme.primary,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(32),
+              topRight: Radius.circular(32),
+            ),
+          ),
+          child: ExpandablePageView.builder(
+            controller: _pageController,
+            itemCount: _totalPages,
 
-          onPageChanged: (page) {
-            widget.onDayChanged?.call();
+            onPageChanged: (page) {
+              widget.onDayChanged?.call();
 
-            final virtualDay = page % _daysInWeek;
+              final virtualDay = page % _daysInWeek;
 
-            if (virtualDay != _currentDayIdx) {
               setState(() {
+                _currentPage = page;
                 _currentDayIdx = virtualDay;
               });
               _savedDayIdx?.set(_currentDayIdx);
-            }
 
-            if (page < _daysInWeek * 10 ||
-                page > _totalPages - _daysInWeek * 10) {
-              final currentOffset = (page - _middlePage) ~/ _daysInWeek;
-              final targetPage = _middleWeek * _daysInWeek + _currentDayIdx;
+              if (page < _daysInWeek * 10 ||
+                  page > _totalPages - _daysInWeek * 10) {
+                final currentOffset = (page - _middlePage) ~/ _daysInWeek;
+                final targetPage = _middleWeek * _daysInWeek + _currentDayIdx;
 
-              final oldDayIdx = page % _daysInWeek;
-              final oldStart = page - oldDayIdx;
-              final oldOffset = (oldStart - _initialWeekStart) ~/ _daysInWeek;
+                final oldDayIdx = page % _daysInWeek;
+                final oldStart = page - oldDayIdx;
+                final oldOffset = (oldStart - _initialWeekStart) ~/ _daysInWeek;
 
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                _pageController.jumpToPage(targetPage);
-                _middlePage = targetPage - currentOffset * _daysInWeek;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _pageController.jumpToPage(targetPage);
+                  setState(() {
+                    _middlePage = targetPage - currentOffset * _daysInWeek;
 
-                final targetStart = targetPage - _currentDayIdx;
-                _initialWeekStart = targetStart - oldOffset * _daysInWeek;
-              });
-            }
-          },
-          itemBuilder: (context, index) {
-            final dayIdx = index % _daysInWeek;
-            final startOfWeek = index - dayIdx;
-            final offset = (startOfWeek - _initialWeekStart) ~/ _daysInWeek;
+                    final targetStart = targetPage - _currentDayIdx;
+                    _initialWeekStart = targetStart - oldOffset * _daysInWeek;
+                  });
+                });
+              }
+            },
+            itemBuilder: (context, index) {
+              final dayIdx = index % _daysInWeek;
+              final startOfWeek = index - dayIdx;
+              final offset = (startOfWeek - _initialWeekStart) ~/ _daysInWeek;
 
-            final parityMod = offset % 2;
-            final absMod = parityMod < 0 ? -parityMod : parityMod;
-            final flip = (absMod % 2) == 1;
-            final parity = flip ? 3 - _initialParity : _initialParity;
+              final parityMod = offset % 2;
+              final absMod = parityMod < 0 ? -parityMod : parityMod;
+              final flip = (absMod % 2) == 1;
+              final parity = flip ? 3 - _initialParity : _initialParity;
 
-            final v =
-                ReactiveStore.get("virtual_week_parity") ??
-                ReactiveStore.createAndGet(
-                  name: "virtual_week_parity",
-                  value: parity,
-                  toSave: false,
-                )!;
-            v.set(parity);
-            final normalizedDayIdx = dayIdx.clamp(0, _daysInWeek - 1);
-            return DayPage(
-              key: ValueKey(normalizedDayIdx),
-              dayIdx: normalizedDayIdx,
-              parity: parity,
-            );
-          },
+              final v =
+                  ReactiveStore.get("virtual_week_parity") ??
+                  ReactiveStore.createAndGet(
+                    name: "virtual_week_parity",
+                    value: parity,
+                    toSave: false,
+                  )!;
+              v.set(parity);
+              final normalizedDayIdx = dayIdx.clamp(0, _daysInWeek - 1);
+              return DayPage(
+                key: ValueKey(normalizedDayIdx),
+                dayIdx: normalizedDayIdx,
+                parity: parity,
+              );
+            },
+          ),
         ),
       ),
     );
@@ -281,6 +301,7 @@ class DayPage extends StatefulWidget {
 
 class _DayPageState extends State<DayPage> with AutomaticKeepAliveClientMixin {
   List<List<List<String>>>? _data;
+  bool _hasError = false;
   List<List<Widget>> _imagesPerInterval = [];
   late Future<List<List<List<String>>>> _future;
 
@@ -312,7 +333,13 @@ class _DayPageState extends State<DayPage> with AutomaticKeepAliveClientMixin {
             });
           }
         })
-        .catchError((error) {});
+        .catchError((error) {
+          if (mounted) {
+            setState(() {
+              _hasError = true;
+            });
+          }
+        });
   }
 
   @override
@@ -344,13 +371,17 @@ class _DayPageState extends State<DayPage> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
 
+    if (_hasError) {
+      return vacationNotice(context);
+    }
+
     if (_data == null) {
       if (widget.dayIdx >= 5) {
         return Padding(
           padding: EdgeInsets.only(top: 200),
           child: Center(
             child: Text(
-              "Nu sunt lecții...",
+              L10n.tr("no_lessons_day"),
               style: context.theme.textTheme.bodyLarge!.copyWith(
                 color: context.theme.textSecondary,
               ),
@@ -369,7 +400,7 @@ class _DayPageState extends State<DayPage> with AutomaticKeepAliveClientMixin {
         padding: EdgeInsets.only(top: 200),
         child: Center(
           child: Text(
-            "Datele nu au fost regăsite",
+            L10n.tr("no_data_found"),
             style: context.theme.textTheme.bodyMedium!.copyWith(
               color: context.theme.textSecondary,
             ),

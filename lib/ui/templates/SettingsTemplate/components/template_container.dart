@@ -1,6 +1,7 @@
 import 'package:cihcahul_plus/core/models/selector_entry.dart';
 import 'package:cihcahul_plus/core/models/variable.dart';
 import 'package:cihcahul_plus/core/services/classroom_servie.dart';
+import 'package:cihcahul_plus/core/services/localization_service.dart';
 import 'package:cihcahul_plus/core/services/reactive_store.dart';
 import 'package:cihcahul_plus/core/themes/app_themes.dart';
 import 'package:cihcahul_plus/ui/templates/SettingsTemplate/common/selector_container.dart';
@@ -45,45 +46,44 @@ class _TemplateContainerState extends State<TemplateContainer> {
         children: [
           HeadInfoContainer(
             text1: Text(
-              "General",
+              L10n.tr("section_general"),
               style: context.theme.textTheme.titleLarge!.copyWith(
                 color: context.theme.textPrimary,
               ),
             ),
           ),
-          NotificationTrigher(
-            type: "warning",
-            content:
-                "Aceasta functie acum este indisponibila din cauza lucrarilor asupra ei. Cerem scuze pentru incomoditati",
-            trigherElement: SwitchContainer(
-              name: "Limba",
-              id: "language",
-              variants: ["Romina", "Rusa", "Engleza"],
-              variatsId: ['ro', 'ru', 'en'],
-              defaultVariant: "ro",
-            ),
+          SwitchContainer(
+            name: L10n.tr("setting_language"),
+            id: "language",
+            variants: const ["Română", "Русский", "English"],
+            variatsId: ['ro', 'ru', 'en'],
+            defaultVariant: "ro",
           ),
 
           SizedBox(height: 5),
           SwitchContainer(
-            name: "Tema",
+            name: L10n.tr("setting_theme"),
             id: "theme",
-            variants: ["Deschisa", "Inchisa", "Din sistema"],
+            variants: [
+              L10n.tr("theme_light"),
+              L10n.tr("theme_dark"),
+              L10n.tr("theme_system"),
+            ],
             variatsId: ['light', 'dark', 'system'],
-            defaultVariant: "dark",
+            defaultVariant: "system",
           ),
           HeadInfoContainer(
             text1: Text(
-              "Filtre",
+              L10n.tr("section_filters"),
               style: context.theme.textTheme.titleLarge!.copyWith(
                 color: context.theme.textPrimary,
               ),
             ),
           ),
           SwitchContainer(
-            name: "Arata graficul",
+            name: L10n.tr("setting_show_timetable"),
             id: "timetable_type",
-            variants: ["Elevului", "Invatatorului"],
+            variants: [L10n.tr("role_student"), L10n.tr("role_teacher")],
             variatsId: ['student', 'teacher'],
             defaultVariant: "student",
           ),
@@ -101,9 +101,9 @@ class _TemplateContainerState extends State<TemplateContainer> {
                     if (!snapshot.hasData) {
                       return SelectorContainer(
                         key: ValueKey("teacher_container"),
-                        name: "Sunt",
+                        name: L10n.tr("label_i_am"),
                         selectorId: "teacher_id",
-                        selecotrMessage: "Alege numele",
+                        selecotrMessage: L10n.tr("selector_choose_name"),
                         defaultData: SelectorEntry(
                           id: "-40",
                           name: "Arseni Adriana",
@@ -113,9 +113,9 @@ class _TemplateContainerState extends State<TemplateContainer> {
                     }
                     return SelectorContainer(
                       key: ValueKey("teacher_container"),
-                      name: "Sunt",
+                      name: L10n.tr("label_i_am"),
                       selectorId: "teacher_id",
-                      selecotrMessage: "Alege numele",
+                      selecotrMessage: L10n.tr("selector_choose_name"),
                       defaultData: SelectorEntry(
                         id: "-40",
                         name: "Arseni Adriana",
@@ -132,9 +132,9 @@ class _TemplateContainerState extends State<TemplateContainer> {
                   if (!futureSnapshot.hasData) {
                     return SelectorContainer(
                       key: ValueKey("classroom_container"),
-                      name: "Sunt in clasa",
+                      name: L10n.tr("setting_am_in_class"),
                       selectorId: "classroom_id",
-                      selecotrMessage: "Alege grupa",
+                      selecotrMessage: L10n.tr("selector_choose_group"),
                       defaultData: SelectorEntry(id: "-68", name: "P.2421"),
                       data: <SelectorEntry>[],
                     );
@@ -144,25 +144,33 @@ class _TemplateContainerState extends State<TemplateContainer> {
                     children: [
                       SelectorContainer(
                         key: ValueKey("classroom_container"),
-                        name: "Sunt in clasa",
+                        name: L10n.tr("setting_am_in_class"),
                         selectorId: "classroom_id",
-                        selecotrMessage: "Alege grupa",
+                        selecotrMessage: L10n.tr("selector_choose_group"),
                         defaultData: SelectorEntry(id: "-68", name: "P.2421"),
                         data: futureSnapshot.data!,
                       ),
                       SizedBox(height: 5),
                       SwitchContainer(
-                        name: "Arata grupa",
+                        name: L10n.tr("setting_show_group"),
                         id: "show_group",
-                        variants: ["Toate", "Prima", "Adoua"],
+                        variants: [
+                          L10n.tr("group_all"),
+                          L10n.tr("group_first"),
+                          L10n.tr("group_second"),
+                        ],
                         variatsId: ['all', 'first', 'second'],
                         defaultVariant: "all",
                       ),
                       SizedBox(height: 5),
                       SwitchContainer(
-                        name: "Sunt",
+                        name: L10n.tr("label_i_am"),
                         id: "student_language",
-                        variants: ["Anglofon", "Francofon", "Nu importa"],
+                        variants: [
+                          L10n.tr("lang_track_anglophone"),
+                          L10n.tr("lang_track_francophone"),
+                          L10n.tr("lang_track_none"),
+                        ],
                         variatsId: ['anglophone', 'francophone', 'none'],
                         defaultVariant: 'none',
                       ),
@@ -173,49 +181,48 @@ class _TemplateContainerState extends State<TemplateContainer> {
             },
           ),
           SizedBox(height: 5),
-          ToggleContainer(name: "Arata zilele de odihna", id: "show_weekend"),
+          ToggleContainer(
+            name: L10n.tr("setting_show_weekend"),
+            id: "show_weekend",
+          ),
           HeadInfoContainer(
             text1: Text(
-              "Automatizare",
+              L10n.tr("section_automation"),
               style: context.theme.textTheme.titleLarge!.copyWith(
                 color: context.theme.textPrimary,
               ),
             ),
           ),
           ToggleContainer(
-            name: "Trecerea zilei automat",
+            name: L10n.tr("setting_auto_day_switch"),
             id: "auto_day_switch",
-            description:
-                "Sistemul schimba orarul pe ziua urmatoare in cazul cind orele s-au terminat.",
+            description: L10n.tr("setting_auto_day_switch_desc"),
           ),
           HeadInfoContainer(
             text1: Text(
-              "Notificari",
+              L10n.tr("section_notifications"),
               style: context.theme.textTheme.titleLarge!.copyWith(
                 color: context.theme.textPrimary,
               ),
             ),
           ),
           ToggleContainer(
-            name: "Inceputul lectiilor",
+            name: L10n.tr("setting_lesson_start_notify"),
             id: "lesson_start_switch",
-            description:
-                "Cu 5min inainte de a se incepe lectia, sistemul trimite notificare de amintire.",
+            description: L10n.tr("setting_lesson_start_notify_desc"),
           ),
           NotificationTrigher(
             type: "warning",
-            content:
-                "Aceasta functie acum este indisponibila din cauza lucrarilor asupra ei. Cerem scuze pentru incomoditati",
+            content: L10n.tr("feature_unavailable"),
             trigherElement: ToggleContainer(
-              name: "Lectia acum si urmatoarea",
+              name: L10n.tr("setting_fast_info_notify"),
               id: "fast_info_notify",
-              description:
-                  "Arata notificarea cu informatia despre lectia de acum si urmatoarea",
+              description: L10n.tr("setting_fast_info_notify_desc"),
             ),
           ),
           HeadInfoContainer(
             text1: Text(
-              "Aditional",
+              L10n.tr("section_additional"),
               style: context.theme.textTheme.titleLarge!.copyWith(
                 color: context.theme.textPrimary,
               ),
@@ -232,7 +239,7 @@ class _TemplateContainerState extends State<TemplateContainer> {
               }
             },
             child: Text(
-              "Sursa Endpoint",
+              L10n.tr("setting_endpoint_source"),
               style: TextStyle(
                 color: context.theme.surface,
                 decoration: TextDecoration.underline,
@@ -240,7 +247,7 @@ class _TemplateContainerState extends State<TemplateContainer> {
               ),
             ),
           ),
-          SizedBox(height: 50,)
+          SizedBox(height: 50),
         ],
       ),
     );

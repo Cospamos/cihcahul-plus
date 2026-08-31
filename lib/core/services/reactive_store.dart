@@ -23,6 +23,18 @@ class ReactiveStore {
     store.remove(name);
   }
 
+  /// Drops [name] from memory *and* from the persisted Hive box. Plain
+  /// [remove] alone isn't enough for a variable that used to be saved:
+  /// [extract] reloads every key the box has ever seen straight into
+  /// [toSaveStore], so the next [save] would just write the stale value
+  /// right back.
+  static Future<void> forget(String name) async {
+    store.remove(name);
+    toSaveStore.remove(name);
+    final box = await Hive.openBox<VariableData>('variables');
+    await box.delete(name);
+  }
+
   static Variable? get(String name) => store[name];
    
   static Future<dynamic> wait(String name) async {

@@ -79,7 +79,7 @@ class _SwitchContainerState extends State<SwitchContainer> {
         Container(
           padding: EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: context.theme.primaryContainer,
+            color: context.theme.chipTrack,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -87,6 +87,7 @@ class _SwitchContainerState extends State<SwitchContainer> {
               ...variants.asMap().entries.map((entry) {
                 int idx = entry.key;
                 String variant = entry.value;
+                final selected = currentValue == widget.variatsId[idx];
                 return GestureDetector(
                   onTap: () {
                     v!.set(widget.variatsId[idx]);
@@ -94,17 +95,19 @@ class _SwitchContainerState extends State<SwitchContainer> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: currentValue == widget.variatsId[idx]
-                          ? context.theme.primary
+                      color: selected
+                          ? context.theme.chipSelected
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     padding: EdgeInsets.all(5),
                     child: Text(
                       variant,
-                      style: currentValue == widget.variatsId[idx]
-                          ? TextStyle(color: context.theme.surfaceDim)
-                          : TextStyle(),
+                      style: TextStyle(
+                        color: selected
+                            ? context.theme.chipSelectedText
+                            : context.theme.chipUnselectedText,
+                      ),
                     ),
                   ),
                 );

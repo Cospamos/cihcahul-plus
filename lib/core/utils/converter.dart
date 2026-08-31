@@ -1,8 +1,18 @@
+import 'package:cihcahul_plus/core/services/localization_service.dart';
+
 class Converter {
-  static final List<String> days = ["Luni", "Marti", "Miercuri", "Joi", "Vineri", "Simbata", "Duminica"];
+  static const List<String> _dayKeys = [
+    "day_monday",
+    "day_tuesday",
+    "day_wednesday",
+    "day_thursday",
+    "day_friday",
+    "day_saturday",
+    "day_sunday",
+  ];
 
   static String iTDay(int idx) {
-    return days[idx];
+    return L10n.tr(_dayKeys[idx]);
   }
 
   static List<String> _getTimeIntervalParts(String timeInterval) {
@@ -16,9 +26,9 @@ class Converter {
 
     List<String> stringStartTime = time[0].split(":");
     List<String> stringEndTime = time[1].split(":");
-    
+
     Duration startTime = Duration(
-      hours: int.parse(stringStartTime[0]), 
+      hours: int.parse(stringStartTime[0]),
       minutes: int.parse(stringStartTime[1])
     );
     startEndTime.add(startTime);
@@ -55,8 +65,8 @@ class Converter {
     if (subject.contains("Didactica educației pentru limbaj și comunicare")) return "Limbaj și Comunicare in Didactica";
     if (subject.contains("Didactica") && subject.contains("Matematica")) return "Didactica Matematicii Elementare";
     if (subject.contains("Administrarea Retelelor")) return "Administrarea Retelelor";
-    if (subject.contains("Decizii") && subject.contains("Viata")) return "Mod de Viata Sanatos";  
-    if (subject.contains("Structura") && subject.contains("Calculatoarelor")) return "Structura Calculatoarelor";  
+    if (subject.contains("Decizii") && subject.contains("Viata")) return "Mod de Viata Sanatos";
+    if (subject.contains("Structura") && subject.contains("Calculatoarelor")) return "Structura Calculatoarelor";
     if (subject.contains("comunicarea profesională")) return "Comunicarea Profisionala";
     if (subject.contains("agricultura ecologică")) return "Agricultura Ecologica";
     if (subject.contains("Tehnologii") && subject.contains("mediu")) return "Tehnologii de Mediu";

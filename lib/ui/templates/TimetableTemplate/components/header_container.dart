@@ -1,4 +1,5 @@
 import 'package:cihcahul_plus/core/models/variable.dart';
+import 'package:cihcahul_plus/core/services/localization_service.dart';
 import 'package:cihcahul_plus/core/services/reactive_store.dart';
 import 'package:cihcahul_plus/core/services/timetable_processor.dart';
 import 'package:cihcahul_plus/core/themes/app_themes.dart';
@@ -28,7 +29,6 @@ Widget headerContentContainer(BuildContext context) {
                   ).then((_) => ReactiveStore.get("day_idx")),
                   initialData: null,
                   builder: (context, snapshot) {
-                    
                     if (!snapshot.hasData || snapshot.data == null) {
                       return _dayAndLessons(
                         context,
@@ -76,7 +76,11 @@ Widget _dayAndLessons(
     children: [
       Text(
         Converter.iTDay(dayIndex),
-        style: context.theme.textTheme.displayLarge,
+        // Russian day names (e.g. "Воскресенье", "Понедельник") don't fit
+        // at the default size, so shrink just this label for that locale.
+        style: L10n.currentLanguage() == "ru"
+            ? context.theme.textTheme.displayLarge!.copyWith(fontSize: 28)
+            : context.theme.textTheme.displayLarge,
       ),
       DefaultTextStyle(
         style: context.theme.textTheme.bodyMedium!,
@@ -86,17 +90,24 @@ Widget _dayAndLessons(
             FutureBuilder<String>(
               future: TimetableProcessor().getNowLesson(dayIndex, nowH, nowM),
               builder: (context, snapshot) {
-                final nowLesson = snapshot.hasData
-                    ? snapshot.data!
-                    : "Ma gindesc...";
-                
+                final String nowLesson;
+                if (!snapshot.hasData) {
+                  nowLesson = L10n.tr("loading_placeholder");
+                } else if (snapshot.data!.isEmpty) {
+                  nowLesson = "";
+                } else if (snapshot.data! == "Pauza") {
+                  nowLesson = L10n.tr("break_label");
+                } else {
+                  nowLesson = Converter.subjectToAbbreviation(snapshot.data!);
+                }
+
                 return Row(
                   children: [
                     if (nowLesson.isNotEmpty)
                       const Icon(Icons.circle, size: 13),
                     Expanded(
                       child: Text(
-                        Converter.subjectToAbbreviation(nowLesson),
+                        nowLesson,
                         style: context.theme.textTheme.bodySmall!.copyWith(
                           color: context.theme.textPrimary,
                         ),
@@ -116,16 +127,23 @@ Widget _dayAndLessons(
                 nowM,
               ),
               builder: (context, snapshot) {
-                final futureLesson = snapshot.hasData
-                    ? snapshot.data!
-                    : "Ma gindesc...";
+                final String futureLesson;
+                if (!snapshot.hasData) {
+                  futureLesson = L10n.tr("loading_placeholder");
+                } else if (snapshot.data!.isEmpty) {
+                  futureLesson = "";
+                } else {
+                  futureLesson = Converter.subjectToAbbreviation(
+                    snapshot.data!,
+                  );
+                }
                 return Row(
                   children: [
                     if (futureLesson.isNotEmpty)
                       const Icon(Icons.arrow_circle_right_outlined, size: 14),
                     Expanded(
                       child: Text(
-                        Converter.subjectToAbbreviation(futureLesson),
+                        futureLesson,
                         style: context.theme.textTheme.bodySmall!.copyWith(
                           color: context.theme.textPrimary,
                         ),

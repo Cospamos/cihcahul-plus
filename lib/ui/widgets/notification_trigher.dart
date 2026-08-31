@@ -1,3 +1,4 @@
+import 'package:cihcahul_plus/core/services/localization_service.dart';
 import 'package:cihcahul_plus/core/themes/app_themes.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +37,7 @@ class _NotificationTrigherState extends State<NotificationTrigher> {
 
 Widget _warningNotification(BuildContext context, String content) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
-  
+
   return DefaultTextStyle(
     style: TextStyle(decoration: TextDecoration.none),
     child: GestureDetector(
@@ -49,7 +50,9 @@ Widget _warningNotification(BuildContext context, String content) {
             height: 400,
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: (isDark) ? context.theme.primaryContainer : context.theme.primary,
+              color: (isDark)
+                  ? context.theme.primaryContainer
+                  : context.theme.primary,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(32),
                 topRight: Radius.circular(32),
@@ -94,7 +97,7 @@ Widget _warningNotification(BuildContext context, String content) {
                   child: Column(
                     children: [
                       Text(
-                        "Atentie",
+                        L10n.tr("attention_title"),
                         style: context.theme.textTheme.displayLarge!.copyWith(
                           color: context.theme.textPrimary,
                         ),
@@ -117,7 +120,7 @@ Widget _warningNotification(BuildContext context, String content) {
                           color: context.theme.surface,
                         ),
                         child: Text(
-                          "Ok",
+                          L10n.tr("ok_button"),
                           style: context.theme.textTheme.bodyMedium!.copyWith(
                             color: Colors.white,
                           ),

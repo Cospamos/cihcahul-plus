@@ -22,7 +22,8 @@ class _TimetableTemplateState extends State<TimetableTemplate> {
   final ValueNotifier<double> navTop = ValueNotifier(280);
   final ValueNotifier<double> headerTop = ValueNotifier(160);
   late final Variable? _navVar;
-  final bool _autoDaySwitch = ReactiveStore.get("auto_day_switch")?.get() ?? false;
+  final bool _autoDaySwitch =
+      ReactiveStore.get("auto_day_switch")?.get() ?? false;
   int _previousSelected = 0;
 
   @override
@@ -70,7 +71,6 @@ class _TimetableTemplateState extends State<TimetableTemplate> {
       future: TimetableProcessor().requestLastTimeInterval(todayIdx),
       initialData: const Duration(hours: 16, minutes: 30),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const SizedBox();
         final int virtulaDayIdx = snapshot.hasData
             ? () {
                 final nowDuration = Duration(
@@ -78,7 +78,10 @@ class _TimetableTemplateState extends State<TimetableTemplate> {
                   minutes: dateTime.minute,
                 );
                 final lastLessonDuration = snapshot.data!;
-                return (nowDuration >= lastLessonDuration && _autoDaySwitch && todayIdx != 5 && todayIdx != 4)
+                return (nowDuration >= lastLessonDuration &&
+                        _autoDaySwitch &&
+                        todayIdx != 5 &&
+                        todayIdx != 4)
                     ? todayIdx + 1
                     : todayIdx;
               }()
@@ -151,8 +154,16 @@ class _TimetableTemplateState extends State<TimetableTemplate> {
                               },
                             )
                           : TimetableContainer();
-                      return Stack(
-                        children: [settingsButtonContainer(context), content],
+                      return PopScope(
+                        canPop: selected != 1,
+                        onPopInvokedWithResult: (didPop, result) {
+                          if (!didPop) {
+                            _navVar.set(0);
+                          }
+                        },
+                        child: Stack(
+                          children: [settingsButtonContainer(context), content],
+                        ),
                       );
                     },
                   ),

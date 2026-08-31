@@ -1,4 +1,5 @@
 import 'package:cihcahul_plus/core/models/variable.dart';
+import 'package:cihcahul_plus/core/services/localization_service.dart';
 import 'package:cihcahul_plus/core/services/reactive_store.dart';
 import 'package:cihcahul_plus/core/themes/app_themes.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +75,7 @@ class _ToggleContainerState extends State<ToggleContainer> {
         Container(
           padding: EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: context.theme.primaryContainer,
+            color: context.theme.chipTrack,
             borderRadius: BorderRadius.circular(8),
           ),
           child: GestureDetector(
@@ -88,31 +89,35 @@ class _ToggleContainerState extends State<ToggleContainer> {
                 Container(
                   decoration: BoxDecoration(
                     color: currentValue == true
-                        ? context.theme.primary
+                        ? context.theme.chipSelected
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   padding: EdgeInsets.all(5),
                   child: Text(
-                    "On",
-                    style: currentValue == true
-                        ? TextStyle(color: context.theme.surfaceDim)
-                        : TextStyle(),
+                    L10n.tr("toggle_on"),
+                    style: TextStyle(
+                      color: currentValue == true
+                          ? context.theme.chipSelectedText
+                          : context.theme.chipUnselectedText,
+                    ),
                   ),
                 ),
                 Container(
                   decoration: BoxDecoration(
                     color: currentValue == false
-                        ? context.theme.primary
+                        ? context.theme.chipSelected
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   padding: EdgeInsets.all(5),
                   child: Text(
-                    "Off",
-                    style: currentValue == false
-                        ? TextStyle(color: context.theme.surfaceDim)
-                        : TextStyle(),
+                    L10n.tr("toggle_off"),
+                    style: TextStyle(
+                      color: currentValue == false
+                          ? context.theme.chipSelectedText
+                          : context.theme.chipUnselectedText,
+                    ),
                   ),
                 ),
               ],
