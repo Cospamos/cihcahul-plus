@@ -10,6 +10,7 @@ import 'package:cihcahul_plus/ui/templates/SettingsTemplate/common/toggle_contai
 import 'package:cihcahul_plus/ui/widgets/headinfo_container.dart';
 import 'package:cihcahul_plus/ui/widgets/notification_trigher.dart';
 import 'package:cihcahul_plus/ui/widgets/qr_share_dialog.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 
@@ -267,6 +268,19 @@ class _TemplateContainerState extends State<TemplateContainer> {
                 fontSize: 18,
               ),
             ),
+          ),
+          SizedBox(height: 20),
+          FutureBuilder<PackageInfo>(
+            future: PackageInfo.fromPlatform(),
+            builder: (context, snapshot) {
+              final version = snapshot.data?.version ?? "...";
+              return Text(
+                L10n.tr("app_version_label", {"version": version}),
+                style: context.theme.textTheme.labelMedium!.copyWith(
+                  color: context.theme.textSecondary,
+                ),
+              );
+            },
           ),
           SizedBox(height: 50),
         ],
