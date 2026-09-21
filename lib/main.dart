@@ -1,4 +1,3 @@
-import 'package:cihcahul_plus/core/api/edupage_remote_datasource.dart';
 import 'package:cihcahul_plus/core/models/selector_entry.dart';
 import 'package:cihcahul_plus/core/models/variable.dart';
 import 'package:cihcahul_plus/core/services/classroom_migration_service.dart';
@@ -40,15 +39,10 @@ void main() async {
   Hive.registerAdapter(VariableDataAdapter());
   Hive.registerAdapter(SelectorEntryAdapter());
 
+  // Restores the last-known-good timetable along with the settings, so the
+  // schedule is still there when the app starts without a connection. Whether
+  // it's re-downloaded is decided lazily by fetchTimetableJson (once a day).
   await ReactiveStore.extract();
-  // "edupage_data" used to be persisted (toSave: true); purge whatever a
-  // previous version of the app already wrote to Hive so it doesn't keep
-  // coming back through extract()/save() forever.
-  await ReactiveStore.forget("edupage_data");
-  // Only refetch once per day on a cold start (a resume does the same
-  // check, see didChangeAppLifecycleState below) — not on every launch,
-  // so the timetable doesn't get re-downloaded every time the app opens.
-  ensureFreshDataForToday();
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -256,10 +250,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        // Once-a-day refresh: only forces a new API call if today's data
-        // hasn't been fetched yet, instead of hammering the API (or being
-        // stuck with a stale response) on every single app open.
-        ensureFreshDataForToday();
         _checkClassroomChange();
         break;
 

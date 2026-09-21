@@ -1,74 +1,126 @@
 import 'dart:convert';
-import 'package:cihcahul_plus/core/models/variable.dart';
 import 'package:cihcahul_plus/core/services/reactive_store.dart';
 import 'package:http/http.dart' as http;
 import '../constants/api_constants.dart';
 
+const String _dataKey = "edupage_data";
 const String _lastFetchDateKey = "edupage_data_last_fetch_date";
+
+/// Tables every parser relies on. A response missing any of them (an error
+/// page, a payload for the wrong request, a half-loaded school database...)
+/// is treated as a failed fetch instead of replacing a working timetable.
+const List<String> _requiredTables = [
+  'periods',
+  'lessons',
+  'cards',
+  'classes',
+  'teachers',
+];
+
+const Duration _requestTimeout = Duration(seconds: 15);
+
+/// After a failed refresh, keep serving the cached copy for this long
+/// instead of retrying (and waiting out a timeout) on every single call.
+const Duration _retryCooldown = Duration(seconds: 30);
+
+bool _forceRefresh = false;
+DateTime? _lastFailure;
+Future<String>? _inFlight;
 
 String _todayKey() {
   final now = DateTime.now();
   return "${now.year}-${now.month}-${now.day}";
 }
 
-/// Drops the cached timetable response if it hasn't been (successfully)
-/// refreshed today yet, so the next [fetchTimetableJson] call hits the
-/// network instead of serving whatever was fetched on a previous day. Safe
-/// to call on every app open/resume — it's a no-op once today's fetch has
-/// already gone through.
-void ensureFreshDataForToday() {
+bool _needsRefresh() {
+  if (_forceRefresh) return true;
   final lastFetch = ReactiveStore.get(_lastFetchDateKey)?.get() as String?;
-  if (lastFetch != _todayKey()) {
-    ReactiveStore.remove("edupage_data");
-  }
+  if (lastFetch == _todayKey()) return false;
+  final failure = _lastFailure;
+  return failure == null || DateTime.now().difference(failure) > _retryCooldown;
 }
 
-/// Forces the next [fetchTimetableJson] call to hit the network regardless
-/// of whether today's data was already fetched — used by pull-to-refresh.
+/// Makes the next [fetchTimetableJson] call hit the network regardless of
+/// whether today's data was already fetched — used by pull-to-refresh. The
+/// cached timetable is *kept* until a valid replacement actually arrives, so
+/// refreshing without a connection leaves the current schedule on screen.
 void forceRefreshTimetableData() {
-  ReactiveStore.remove("edupage_data");
+  _forceRefresh = true;
 }
 
-Future<String> fetchTimetableJson() async {
-  Variable? v = ReactiveStore.get("edupage_data");
-  if (v != null) return v.get();
-
-  final url = Uri.parse(ApiConstants.timetableEndpoint);
-
-  final headers = {'Content-Type': 'application/json'};
-
-  final body = jsonEncode({
-    "__args": [null, ApiConstants.defaultSchoolId],
-    "__gsh": ApiConstants.edupageGsh,
-  });
-
+bool _isValidPayload(String body) {
   try {
-    final response = await http.post(url, headers: headers, body: body);
-
-    if (response.statusCode == 200) {
-      // Not persisted (toSave: false): a stale/failed response should
-      // never survive an app restart. Freshness across restarts is
-      // instead handled explicitly by ensureFreshDataForToday(), gated by
-      // _lastFetchDateKey (which IS persisted).
-      v = ReactiveStore.createAndGet(
-        name: "edupage_data",
-        value: response.body,
-        toSave: false,
-      );
-
-      final dateVar =
-          ReactiveStore.get(_lastFetchDateKey) ??
-          ReactiveStore.createAndGet(
-            name: _lastFetchDateKey,
-            value: "",
-            toSave: true,
-          );
-      dateVar!.set(_todayKey());
-
-      return v!.get() as String;
-    }
-  } catch (e) {
-    throw Exception(e);
+    final tables = jsonDecode(body)['r']['dbiAccessorRes']['tables'];
+    if (tables is! List) return false;
+    final ids = {for (final t in tables) t['id']};
+    return ids.containsAll(_requiredTables);
+  } catch (_) {
+    return false;
   }
-  return '';
+}
+
+Future<void> _storeFetched(String body) async {
+  // Persisted (toSave: true): this is the last-known-good timetable that
+  // keeps the app usable offline across restarts. It is only ever
+  // overwritten by another validated response, never deleted.
+  final existing = ReactiveStore.get(_dataKey);
+  if (existing == null) {
+    ReactiveStore.createAndGet(name: _dataKey, value: body, toSave: true);
+  } else {
+    await existing.set(body);
+  }
+
+  final dateVar =
+      ReactiveStore.get(_lastFetchDateKey) ??
+      ReactiveStore.createAndGet(
+        name: _lastFetchDateKey,
+        value: "",
+        toSave: true,
+      );
+  await dateVar!.set(_todayKey());
+
+  await ReactiveStore.save();
+}
+
+Future<String> _refresh(String? cachedJson) async {
+  final hadForce = _forceRefresh;
+  try {
+    final response = await http
+        .post(
+          Uri.parse(ApiConstants.timetableEndpoint),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "__args": [null, ApiConstants.defaultSchoolId],
+            "__gsh": ApiConstants.edupageGsh,
+          }),
+        )
+        .timeout(_requestTimeout);
+
+    if (response.statusCode == 200 && _isValidPayload(response.body)) {
+      await _storeFetched(response.body);
+      _lastFailure = null;
+      return response.body;
+    }
+  } catch (_) {
+    // Offline, timeout, DNS failure... handled below like any bad response.
+  } finally {
+    if (hadForce) _forceRefresh = false;
+  }
+
+  _lastFailure = DateTime.now();
+  if (cachedJson != null && cachedJson.isNotEmpty) return cachedJson;
+  throw Exception("Timetable unavailable: no connection and nothing cached");
+}
+
+Future<String> fetchTimetableJson() {
+  final cachedJson = ReactiveStore.get(_dataKey)?.get() as String?;
+  final hasCache = cachedJson != null && cachedJson.isNotEmpty;
+
+  if (hasCache && !_needsRefresh()) return Future.value(cachedJson);
+
+  // Several callers (timetable, pickers, notifications) ask at once on
+  // startup — share one request instead of waiting out N timeouts offline.
+  return _inFlight ??= _refresh(
+    cachedJson,
+  ).whenComplete(() => _inFlight = null);
 }
