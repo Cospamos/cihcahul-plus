@@ -27,9 +27,7 @@ class LessonContainer extends StatefulWidget {
 class _LessonContainerState extends State<LessonContainer> {
   @override
   Widget build(BuildContext context) {
-    String classroom = widget.classroom == "0"
-        ? L10n.tr("gym_hall")
-        : L10n.tr("classroom_label", {"n": widget.classroom});
+    String classroom = L10n.tr("classroom_label", {"n": widget.classroom});
     String group = widget.group == "0"
         ? L10n.tr("both_groups")
         : L10n.tr("group_label", {"n": widget.group});

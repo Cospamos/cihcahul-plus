@@ -94,7 +94,7 @@ class TimetableProcessor {
 
         if (nowDuration < (lessonDuration[0] - Duration(minutes: 5)).abs() &&
             (weeks == weekParity || weeks == 0) &&
-            (group == excludeGroup[getGroup] ||
+            (group != excludeGroup[getGroup] ||
                 group == '0' ||
                 timetableType == "teacher" ||
                 excludeGroup[getGroup] == null) &&

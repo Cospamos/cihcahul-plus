@@ -1,6 +1,6 @@
 class TimetableEntry {
   final String teacher;
-  final int classroom;
+  final String classroom;
   final int weeks;
   final String group;
 

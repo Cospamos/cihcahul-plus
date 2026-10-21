@@ -10,6 +10,7 @@ class StudentTimetableParser {
   late final Map<String, String> _subjects;
   late final Map<String, String> _teachers;
   late final Map<String, String> _classrooms;
+  late final Map<String, Map<String, dynamic>> _groups;
   late final Map<String, String> _periodTime; // id -> "08:00-09:35"
 
   StudentTimetableParser(String jsonString, {this.classId = '-68'})
@@ -25,6 +26,9 @@ class StudentTimetableParser {
     _subjects = _makeDict('subjects');
     _teachers = _makeTeacherDict();
     _classrooms = _makeDict('classrooms', valueField: 'short');
+    _groups = {
+      for (var g in _tables['groups']?['data_rows'] ?? []) g['id']: g,
+    };
     _periodTime = {};
     for (var p in _tables['periods']?['data_rows'] ?? []) {
       _periodTime[p['id']] = '${p['starttime']}-${p['endtime']}';
@@ -72,17 +76,14 @@ class StudentTimetableParser {
       final classrooms = _formatClassrooms(
         card['classroomids'] ?? lesson['classroomids'],
       );
-      final groups = _formatGroups(lesson['groupnames']);
       final weeksCode = card['weeks'] ?? '';
 
       final timeInterval = _calculateTimeInterval(startPeriod, duration);
 
       final classroomStr = classrooms.split(', ').first;
-      final classroom = classroomStr != '—'
-          ? int.tryParse(classroomStr) ?? 0
-          : 0;
+      final classroom = classroomStr.isNotEmpty ? classroomStr : '—';
       final weeks = _parseWeeks(weeksCode);
-      final group = _parseGroup(groups);
+      final group = _resolveGroup(lesson);
 
       final entry = {
         'subject': subject,
@@ -141,7 +142,7 @@ class StudentTimetableParser {
 
           timeSlot[subjectName] = TimetableEntry(
             teacher: entry['teacher'] as String,
-            classroom: entry['classroom'] as int,
+            classroom: entry['classroom'] as String,
             weeks: entry['weeks'] as int,
             group: entry['group'] as String,
           );
@@ -180,21 +181,42 @@ class StudentTimetableParser {
         .join(', ');
   }
 
-  String _formatGroups(dynamic raw) {
-    return (_toList(
-      raw,
-    )).where((g) => g != null).map((g) => g.toString()).join(', ');
+  /// Edupage used to inline group names on the lesson (`groupnames`); it now
+  /// only sends `groupids` pointing into the `groups` table, where a lesson
+  /// shared by several classes lists one group per class. Both are handled.
+  String _resolveGroup(Map<String, dynamic> lesson) {
+    final groupIds = _toList(lesson['groupids']);
+    if (groupIds.isEmpty) {
+      return _parseGroup(
+        _toList(lesson['groupnames']).where((g) => g != null).map((g) => '$g'),
+      );
+    }
+
+    final names = <String>[];
+    for (var id in groupIds) {
+      final group = _groups[id];
+      if (group == null || group['classid'] != classId) continue;
+      if (group['entireclass'] == true) return '0';
+      names.add((group['name'] ?? '').toString());
+    }
+    return _parseGroup(names);
   }
 
   int _parseWeeks(String code) {
     return {'11': 0, '01': 1, '10': 2}[code] ?? 0;
   }
 
-  String _parseGroup(String groupsStr) {
-    if (groupsStr.isNotEmpty) {
-      if (groupsStr.contains('1')) return '1';
-      if (groupsStr.contains('2')) return '2';
-    } 
+  /// Only the "Grupa 1"/"Grupa 2" split counts as group A/B. Language
+  /// sub-groups ("Engleză 1", "Franceză 2") are filtered by subject instead,
+  /// so their digit must not leak into the group filter.
+  String _parseGroup(Iterable<String> names) {
+    for (var name in names) {
+      final match = RegExp(
+        r'^grupa\s*([12])$',
+        caseSensitive: false,
+      ).firstMatch(name.trim());
+      if (match != null) return match.group(1)!;
+    }
     return '0';
   }
 
@@ -210,4 +232,4 @@ class StudentTimetableParser {
     if (value == null) return [];
     return [value];
   }
-}
+}

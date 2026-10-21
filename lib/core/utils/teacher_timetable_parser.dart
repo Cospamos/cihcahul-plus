@@ -88,9 +88,9 @@ class TeacherTimetableParser {
           .split(', ')
           .firstWhere(
             (s) => s != '—' && s.trim().isNotEmpty,
-            orElse: () => '0',
+            orElse: () => '—',
           );
-      final classroom = int.tryParse(classroomStr) ?? 0;
+      final classroom = classroomStr;
 
       final weeks = _parseWeeks(weeksCode);
 
@@ -144,7 +144,7 @@ class TeacherTimetableParser {
 
           timeSlot[subjectName] = TimetableEntry(
             weeks: entry['weeks'] as int,
-            classroom: entry['classroom'] as int,
+            classroom: entry['classroom'] as String,
             group: entry['group'] as String,
             teacher: currentTeacherName,
           );
